@@ -11,8 +11,9 @@ const Joystick: React.FC<JoystickProps> = ({ onMove, onEnd }) => {
   const baseRef = useRef<HTMLDivElement>(null);
   const isDragging = useRef(false);
   
-  const MAX_RADIUS = 56; // Larger radius for finer control
-  const DEADZONE = 0.08; // Lower deadzone for more immediate response
+  // Adjusted for w-28 (112px width). Half is 56px. MAX_RADIUS 44px gives some padding.
+  const MAX_RADIUS = 44; 
+  const DEADZONE = 0.08; 
 
   const updateKnobPosition = useCallback((x: number, y: number) => {
     if (knobRef.current) {
@@ -40,18 +41,16 @@ const Joystick: React.FC<JoystickProps> = ({ onMove, onEnd }) => {
     const angle = Math.atan2(dy, dx);
     const rawNormalizedDist = Math.min(distance, MAX_RADIUS) / MAX_RADIUS;
     
-    // Calibration: Apply deadzone and then a power curve for "steering precision"
-    // This makes small movements much more controllable
     let finalMagnitude = 0;
     if (rawNormalizedDist > DEADZONE) {
       const scaledMag = (rawNormalizedDist - DEADZONE) / (1 - DEADZONE);
+      // Power curve for finer steering control at low magnitudes
       finalMagnitude = Math.pow(scaledMag, 1.2); 
     }
 
     const vx = Math.cos(angle) * finalMagnitude;
     const vy = Math.sin(angle) * finalMagnitude;
 
-    // Visual knob feedback (snappy)
     const visualDist = Math.min(distance, MAX_RADIUS);
     const knobX = Math.cos(angle) * visualDist;
     const knobY = Math.sin(angle) * visualDist;
@@ -99,33 +98,33 @@ const Joystick: React.FC<JoystickProps> = ({ onMove, onEnd }) => {
   }, [handleInput, onEnd, updateKnobPosition]);
 
   return (
-    <div className="fixed bottom-12 right-12 z-[150] lg:hidden touch-none select-none">
+    <div className="fixed bottom-8 right-4 z-[200] lg:hidden touch-none select-none">
       <div 
         ref={baseRef}
-        className="w-32 h-32 bg-white/5 backdrop-blur-xl rounded-full border-2 border-white/20 flex items-center justify-center relative shadow-2xl active:scale-95 transition-transform"
+        className="w-28 h-28 bg-white/5 backdrop-blur-xl rounded-full border-2 border-white/20 flex items-center justify-center relative shadow-2xl active:scale-95 transition-transform"
         onMouseDown={onStart}
         onTouchStart={onStart}
       >
         {/* Inner Guide Ring */}
-        <div className="absolute inset-4 rounded-full border border-white/10 pointer-events-none" />
+        <div className="absolute inset-3 rounded-full border border-white/10 pointer-events-none" />
         
         {/* Directional Hints */}
-        <div className="absolute top-2 left-1/2 -translate-x-1/2 w-1 h-1 bg-white/20 rounded-full" />
-        <div className="absolute bottom-2 left-1/2 -translate-x-1/2 w-1 h-1 bg-white/20 rounded-full" />
-        <div className="absolute left-2 top-1/2 -translate-y-1/2 w-1 h-1 bg-white/20 rounded-full" />
-        <div className="absolute right-2 top-1/2 -translate-y-1/2 w-1 h-1 bg-white/20 rounded-full" />
+        <div className="absolute top-1.5 left-1/2 -translate-x-1/2 w-0.5 h-0.5 bg-white/30 rounded-full" />
+        <div className="absolute bottom-1.5 left-1/2 -translate-x-1/2 w-0.5 h-0.5 bg-white/30 rounded-full" />
+        <div className="absolute left-1.5 top-1/2 -translate-y-1/2 w-0.5 h-0.5 bg-white/30 rounded-full" />
+        <div className="absolute right-1.5 top-1/2 -translate-y-1/2 w-0.5 h-0.5 bg-white/30 rounded-full" />
 
         {/* Joystick Knob */}
         <div 
           ref={knobRef}
-          className="w-16 h-16 bg-gradient-to-br from-white/50 to-white/10 rounded-full border border-white/60 shadow-[0_0_20px_rgba(255,255,255,0.3)] pointer-events-none absolute will-change-transform z-10"
+          className="w-12 h-12 bg-gradient-to-br from-white/60 to-white/20 rounded-full border border-white/70 shadow-[0_0_15px_rgba(255,255,255,0.4)] pointer-events-none absolute will-change-transform z-10"
         >
           {/* Knob Inner Detail */}
-          <div className="absolute inset-[20%] rounded-full border border-white/20" />
+          <div className="absolute inset-[25%] rounded-full border border-white/30" />
         </div>
         
-        <div className="text-white/20 text-[7px] font-black uppercase tracking-[0.4em] pointer-events-none select-none mt-20">
-          Steer
+        <div className="text-white/30 text-[6px] font-black uppercase tracking-[0.4em] pointer-events-none select-none mt-16">
+          Drive
         </div>
       </div>
     </div>
