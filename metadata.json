@@ -1,0 +1,5 @@
+{
+  "name": "Bottle Blitz",
+  "description": "A fast-paced real-time game where you compete against two AI bots to be the first to collect 3 bottles at your home base.",
+  "requestFramePermissions": []
+}
