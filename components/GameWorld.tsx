@@ -34,7 +34,7 @@ const GameWorld: React.FC<GameWorldProps> = ({ players, centerBottles, pills, zo
   const trialInfo = trialStep ? getTrialInstruction(trialStep) : null;
 
   return (
-    <div className="relative w-full h-full aspect-square">
+    <div className="absolute inset-0">
       {/* Background Grid */}
       <div className="absolute inset-0 opacity-10 pointer-events-none" style={{ backgroundImage: 'radial-gradient(#ffffff 1px, transparent 1px)', backgroundSize: '40px 40px' }} />
 
@@ -48,7 +48,6 @@ const GameWorld: React.FC<GameWorldProps> = ({ players, centerBottles, pills, zo
             transform: 'translate(-50%, -50%)',
           }}
         >
-          {/* World-Anchored Dialog Bubble */}
           {trialInfo && (
             <div className={`absolute bottom-16 w-52 animate-in fade-in slide-in-from-bottom-2 duration-300 ${trialStep === 'COMPLETE' ? 'scale-110' : ''}`}>
                <div className={`bg-slate-900 border ${trialInfo.color} rounded-2xl p-3 shadow-[0_10px_40px_rgba(0,0,0,0.6)] flex items-center gap-3 relative`}>
@@ -111,7 +110,7 @@ const GameWorld: React.FC<GameWorldProps> = ({ players, centerBottles, pills, zo
         );
       })}
 
-      {/* Player Homes (Perfectly Circular) */}
+      {/* Player Homes */}
       {players.map((p) => {
         const isProtected = p.activePowers.some(pow => pow.type === 'PROTECT');
         const isP1Home = p.id === 'p1';
@@ -134,17 +133,14 @@ const GameWorld: React.FC<GameWorldProps> = ({ players, centerBottles, pills, zo
                   <span className="text-[7px] lg:text-[9px] font-black text-emerald-400 bg-slate-900/80 px-2 py-0.5 rounded-full uppercase tracking-widest shadow-lg">Protected</span>
                </div>
             )}
-
             {isProtected && (
               <div className="absolute inset-[-4px] rounded-full border-2 border-emerald-400/30 animate-[spin_4s_linear_infinite] aspect-square" style={{ borderStyle: 'dotted' }} />
             )}
-            
             <div className="flex flex-wrap gap-0.5 lg:gap-1 justify-center max-w-[90%] pointer-events-none">
               {Array.from({ length: p.score }).map((_, i) => (
                 <BottleIcon key={i} color={p.color} size={8} />
               ))}
             </div>
-            
             <div className="absolute -bottom-4 lg:-bottom-6 flex flex-col items-center pointer-events-none">
               <span className={`text-[6px] lg:text-[10px] font-black uppercase tracking-tight whitespace-nowrap text-center ${isProtected ? 'text-emerald-400' : ''}`} style={{ color: !isProtected ? p.color : undefined }}>
                 {isProtected ? '🛡️ AEGIS' : `${p.type === 'human' ? 'YOU' : p.name.split(' ')[1] || p.name}`}
@@ -154,7 +150,7 @@ const GameWorld: React.FC<GameWorldProps> = ({ players, centerBottles, pills, zo
         );
       })}
 
-      {/* Players (Perfectly Circular) */}
+      {/* Players */}
       {players.map((p) => {
         const isSpeeding = p.activePowers.some(pow => pow.type === 'SPEED');
         return (
@@ -172,7 +168,6 @@ const GameWorld: React.FC<GameWorldProps> = ({ players, centerBottles, pills, zo
                 }}
               />
             )}
-            
             <div
               className="absolute rounded-full transition-[transform] duration-75 flex items-center justify-center shadow-xl aspect-square flex-shrink-0"
               style={{
@@ -192,7 +187,6 @@ const GameWorld: React.FC<GameWorldProps> = ({ players, centerBottles, pills, zo
                <span className="text-[7px] lg:text-[10px] font-black text-white uppercase pointer-events-none drop-shadow-md select-none">
                  {p.type === 'human' ? 'U' : 'AI'}
                </span>
-
                <div className="absolute inset-0 rounded-full border-2 border-transparent pointer-events-none aspect-square">
                   {p.activePowers.map(pow => (
                     <div 
